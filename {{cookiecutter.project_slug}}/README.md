@@ -13,8 +13,7 @@
 Create a `.env` file in the project root:
 
 Available environment variables:
-- `DEBUG`: Enable debug mode (default: `false`). When enabled, FastAPI runs in debug mode and uvicorn enables auto-reload.
-- `LOG_LEVEL`: Logging level as integer (default: `20` for INFO). Common values: `10` (DEBUG), `20` (INFO), `30` (WARNING), `40` (ERROR), `50` (CRITICAL)
+- `DEBUG`: Enable debug mode (default: `false`). When enabled, FastAPI runs in debug mode, uvicorn enables auto-reload, and logging level is set to DEBUG. When disabled, logging level is INFO.
 
 ## How to Install and Run
 

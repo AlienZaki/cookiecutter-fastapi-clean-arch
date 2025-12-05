@@ -1,3 +1,4 @@
+import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
@@ -17,7 +18,8 @@ from app.domain.errors import ProductValidationError
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     """Manage application lifespan events."""
-    setup_logging(level=settings.log_level)
+    log_level = logging.DEBUG if settings.debug else logging.INFO
+    setup_logging(level=log_level)
     container = get_container()
     app.state.container = container
     yield
