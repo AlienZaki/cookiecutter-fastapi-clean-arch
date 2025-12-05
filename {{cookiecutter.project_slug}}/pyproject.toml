@@ -19,6 +19,7 @@ dev = [
     "pyright>=1.1.0",
     "pre-commit>=4.5.0",
     "pytest>=9.0.1",
+    "pytest-cov==7.0.0",
     "ruff>=0.14.7",
 ]
 
@@ -69,5 +70,30 @@ include = [
     "{{ cookiecutter.app_name }}",
     "main.py",
 ]
+
+[tool.coverage.run]
+source = ["{{ cookiecutter.app_name }}", "main.py"]
+omit = [
+    "**/__pycache__/**",
+    "**/tests/**",
+    "**/test_*.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "@abstractmethod",
+]
+show_missing = true
+skip_covered = false
+precision = 2
+
+[tool.coverage.html]
+directory = "htmlcov"
 
 

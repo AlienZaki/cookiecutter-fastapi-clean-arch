@@ -1,4 +1,4 @@
-.PHONY: help install install-prod install-pre-commit test lint lint-fix type-check clean clean-all run
+.PHONY: help install install-prod install-pre-commit test test-unit test-integration test-fast lint lint-fix type-check clean clean-all run
 
 PYTHON := python
 UV := uv
@@ -26,8 +26,17 @@ install-prod: ## Install project dependencies for production (without dev depend
 install-pre-commit: ## Install pre-commit hooks only
 	$(UV) run pre-commit install
 
-test: ## Run tests
-	$(PYTEST) tests/
+test: ## Run all tests with verbose output and coverage
+	$(PYTEST) tests/ -v --tb=short --cov={{ cookiecutter.app_name }} --cov=main --cov-report=term --cov-report=html
+
+test-unit: ## Run unit tests only
+	$(PYTEST) tests/unit/ -v --tb=short
+
+test-integration: ## Run integration tests only
+	$(PYTEST) tests/integration/ -v --tb=short
+
+test-fast: ## Run tests and stop on first failure (for quick feedback)
+	$(PYTEST) tests/ -v --tb=short -x
 
 lint: ## Run linter (ruff check)
 	$(RUFF) check .
@@ -49,6 +58,8 @@ clean: ## Remove build artifacts and cache files
 	find . -type d -name ".pytest_cache" -exec rm -r {} + 2>/dev/null || true
 	find . -type d -name ".pyright" -exec rm -r {} + 2>/dev/null || true
 	find . -type d -name ".ruff_cache" -exec rm -r {} + 2>/dev/null || true
+	find . -type d -name "htmlcov" -exec rm -r {} + 2>/dev/null || true
+	find . -type f -name ".coverage" -delete 2>/dev/null || true
 
 clean-all: clean ## Remove build artifacts, cache files, and virtual environment
 	rm -rf .venv 2>/dev/null || true
