@@ -12,7 +12,9 @@ from fastapi.testclient import TestClient
 from app.api.router import app
 from app.core.container import reset_container
 from app.repositories.memory_repository import MemoryRepository
+{% if cookiecutter.include_entity_example == "yes" %}
 from app.services.entity_service import EntityService
+{% endif %}
 
 
 @pytest.fixture(autouse=True)
@@ -39,7 +41,17 @@ def memory_repository() -> MemoryRepository:
     return MemoryRepository()
 
 
+{% if cookiecutter.include_entity_example == "yes" %}
 @pytest.fixture
 def entity_service(memory_repository: MemoryRepository) -> EntityService:
     """Create EntityService with test dependencies."""
     return EntityService(repository=memory_repository)
+{% else %}
+# Example: Add your service fixtures here
+# from app.services.entity_service import EntityService
+# 
+# @pytest.fixture
+# def entity_service(memory_repository: MemoryRepository) -> EntityService:
+#     """Create EntityService with test dependencies."""
+#     return EntityService(repository=memory_repository)
+{% endif %}

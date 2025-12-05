@@ -9,10 +9,12 @@ To create repository tests:
 
 import pytest
 
+{% if cookiecutter.include_entity_example == "yes" %}
 from app.domain.models import Entity
+{% endif %}
 from app.repositories.memory_repository import MemoryRepository
 
-
+{% if cookiecutter.include_entity_example == "yes" %}
 @pytest.mark.asyncio
 async def test_repository_save() -> None:
     """Test saving an entity to repository."""
@@ -103,3 +105,15 @@ async def test_repository_delete_not_found() -> None:
 
     with pytest.raises(ValueError, match="Entity with id '1' not found"):
         await repo.delete("1")
+{% else %}
+# Example: Add your repository tests here
+# 
+# @pytest.mark.asyncio
+# async def test_repository_save() -> None:
+#     """Test saving an entity to repository."""
+#     repo = MemoryRepository()
+#     item = Entity(id="1", name="Test Entity", price=10.0)
+#     await repo.save(item)
+#     items = await repo.list_all()
+#     assert len(items) == 1
+{% endif %}

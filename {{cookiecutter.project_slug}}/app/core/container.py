@@ -1,6 +1,8 @@
 from app.domain.protocols import Repository
 from app.repositories.memory_repository import MemoryRepository
+{% if cookiecutter.include_entity_example == "yes" %}
 from app.services.entity_service import EntityService
+{% endif %}
 
 
 class Container:
@@ -14,7 +16,9 @@ class Container:
     def __init__(self) -> None:
         """Initialize container (dependencies created lazily)."""
         self._repository: Repository | None = None
+        {% if cookiecutter.include_entity_example == "yes" %}
         self._entity_service: EntityService | None = None
+        {% endif %}
 
     @property
     def repository(self) -> Repository:
@@ -23,12 +27,22 @@ class Container:
             self._repository = self._create_repository()
         return self._repository
 
+    {% if cookiecutter.include_entity_example == "yes" %}
     @property
     def entity_service(self) -> EntityService:
         """Get EntityService instance."""
         if self._entity_service is None:
             self._entity_service = EntityService(repository=self.repository)
         return self._entity_service
+    {% else %}
+    # Example: Add your service properties here
+    # @property
+    # def entity_service(self) -> EntityService:
+    #     """Get EntityService instance."""
+    #     if self._entity_service is None:
+    #         self._entity_service = EntityService(repository=self.repository)
+    #     return self._entity_service
+    {% endif %}
 
     def _create_repository(self) -> Repository:
         """Factory method to create repository based on settings.
@@ -46,7 +60,9 @@ class Container:
         Clears all dependencies, forcing re-initialization on next access.
         """
         self._repository = None
+        {% if cookiecutter.include_entity_example == "yes" %}
         self._entity_service = None
+        {% endif %}
 
 
 _container: Container | None = None

@@ -4,15 +4,17 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
+{% if cookiecutter.include_entity_example == "yes" %}
 from app.api.error_handlers import entity_not_found_handler
 from app.api.error_handlers import entity_validation_error_handler
 from app.api.v1.endpoints import entities
+from app.domain.errors import EntityNotFoundError
+from app.domain.errors import EntityValidationError
+{% endif %}
 from app.core.config import settings
 from app.core.container import get_container
 from app.core.container import reset_container
 from app.core.logging import setup_logging
-from app.domain.errors import EntityNotFoundError
-from app.domain.errors import EntityValidationError
 
 
 @asynccontextmanager
@@ -46,10 +48,19 @@ async def health() -> dict[str, str]:
     return {"status": "healthy"}
 
 
+{% if cookiecutter.include_entity_example == "yes" %}
 # Include API routes
 app.include_router(entities.router, prefix="{{ cookiecutter.api_prefix }}", tags=["entities"])
-
 
 # Register error handlers
 app.add_exception_handler(EntityNotFoundError, entity_not_found_handler)
 app.add_exception_handler(EntityValidationError, entity_validation_error_handler)
+{% else %}
+# Example: Include your API routes here
+# app.include_router(entities.router, prefix="{{ cookiecutter.api_prefix }}", tags=["entities"])
+
+# Example: Register error handlers here
+# from app.domain.errors import EntityNotFoundError
+# from app.api.error_handlers import entity_not_found_handler
+# app.add_exception_handler(EntityNotFoundError, entity_not_found_handler)
+{% endif %}

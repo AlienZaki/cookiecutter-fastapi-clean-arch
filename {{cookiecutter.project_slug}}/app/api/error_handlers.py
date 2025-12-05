@@ -10,6 +10,7 @@ from fastapi import Request
 from fastapi import status
 from fastapi.responses import JSONResponse
 
+{% if cookiecutter.include_entity_example == "yes" %}
 from app.domain.errors import EntityNotFoundError
 from app.domain.errors import EntityValidationError
 
@@ -38,4 +39,20 @@ async def entity_validation_error_handler(
         status_code=status.HTTP_400_BAD_REQUEST,
         content={"error": str(exc)},
     )
+{% else %}
+# Example: Add your error handlers here
+# from app.domain.errors import EntityNotFoundError
+# 
+# async def entity_not_found_handler(
+#     request: Request,
+#     exc: Exception,
+# ) -> JSONResponse:
+#     """Handle EntityNotFoundError exceptions."""
+#     if not isinstance(exc, EntityNotFoundError):
+#         raise TypeError("Expected EntityNotFoundError")
+#     return JSONResponse(
+#         status_code=status.HTTP_404_NOT_FOUND,
+#         content={"error": str(exc), "entity_id": exc.entity_id},
+#     )
+{% endif %}
 

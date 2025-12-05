@@ -7,6 +7,7 @@
   "author_name": "Zaki",
   "author_email": "zaki@example.com",
   "include_memory_repository": "yes",
-  "api_prefix": "/api/v1"
+  "api_prefix": "/api/v1",
+  "include_entity_example": "no"
 }
 

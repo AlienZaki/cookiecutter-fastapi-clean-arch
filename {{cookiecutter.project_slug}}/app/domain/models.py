@@ -8,7 +8,7 @@ To create a new domain model:
 
 from dataclasses import dataclass
 
-
+{% if cookiecutter.include_entity_example == "yes" %}
 @dataclass(frozen=True)
 class Entity:
     """Entity domain model (immutable domain entity)."""
@@ -26,3 +26,24 @@ class Entity:
             raise ValueError("Entity name cannot be empty")
         if self.price < 0:
             raise ValueError("Entity price cannot be negative")
+{% else %}
+# Example: Define your domain models here
+# 
+# @dataclass(frozen=True)
+# class Entity:
+#     """Entity domain model (immutable domain entity)."""
+# 
+#     id: str
+#     name: str
+#     price: float
+#     in_stock: bool = True
+# 
+#     def __post_init__(self) -> None:
+#         """Validate domain invariants."""
+#         if not self.id or not self.id.strip():
+#             raise ValueError("Entity id cannot be empty")
+#         if not self.name or not self.name.strip():
+#             raise ValueError("Entity name cannot be empty")
+#         if self.price < 0:
+#             raise ValueError("Entity price cannot be negative")
+{% endif %}
