@@ -36,6 +36,29 @@ class ProductService:
             raise ProductNotFoundError(product_id)
         return product
 
-    async def get_products(self) -> list[Product]:
-        """Get all products."""
-        return await self.repository.list_all()
+    async def get_products(self, offset: int = 0, limit: int | None = None) -> list[Product]:
+        """Get all products with optional pagination.
+        
+        Args:
+            offset: Number of products to skip (for pagination)
+            limit: Maximum number of products to return (None for all)
+        
+        Returns:
+            List of products
+        """
+        return await self.repository.list_all(offset=offset, limit=limit)
+
+    async def update_product(self, product: Product) -> Product:
+        """Update an existing product."""
+        try:
+            await self.repository.update(product)
+            return product
+        except ValueError as e:
+            raise ProductNotFoundError(str(e)) from e
+
+    async def delete_product(self, product_id: str) -> None:
+        """Delete a product by ID."""
+        try:
+            await self.repository.delete(product_id)
+        except ValueError as e:
+            raise ProductNotFoundError(str(e)) from e

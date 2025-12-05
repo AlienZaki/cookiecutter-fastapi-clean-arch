@@ -38,6 +38,14 @@ class ProductCreateRequest(BaseModel):
     in_stock: bool = True
 
 
+class ProductUpdateRequest(BaseModel):
+    """Request schema for updating a product."""
+
+    name: str | None = None
+    price: float | None = None
+    in_stock: bool | None = None
+
+
 class ProductsListResponse(BaseModel):
     """Response schema for product list."""
 

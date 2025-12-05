@@ -23,6 +23,28 @@ class Repository(Protocol):
         """Get a product by ID."""
         ...
 
-    async def list_all(self) -> list[Product]:
-        """Retrieve all products."""
+    async def list_all(self, offset: int = 0, limit: int | None = None) -> list[Product]:
+        """Retrieve all products with optional pagination."""
+        ...
+
+    async def update(self, product: Product) -> None:
+        """Update an existing product.
+        
+        Args:
+            product: Product with updated data
+        
+        Raises:
+            ValueError: If product with given ID doesn't exist
+        """
+        ...
+
+    async def delete(self, product_id: str) -> None:
+        """Delete a product by ID.
+        
+        Args:
+            product_id: ID of the product to delete
+        
+        Raises:
+            ValueError: If product with given ID doesn't exist
+        """
         ...

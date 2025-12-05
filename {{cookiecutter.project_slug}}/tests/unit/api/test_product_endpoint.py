@@ -108,3 +108,109 @@ def test_create_product_validation(client) -> None:
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
     data = response.json()
     assert "detail" in data
+
+
+def test_list_products_with_pagination(client) -> None:
+    """Test listing products with pagination."""
+    # Create multiple products
+    for i in range(5):
+        client.post("/api/v1/products", json={"name": f"Product {i}", "price": float(i * 10)})
+    
+    # Test offset
+    response = client.get("/api/v1/products?offset=2")
+    assert response.status_code == status.HTTP_200_OK
+    data = response.json()
+    assert len(data["products"]) == 3
+    assert data["count"] == 5
+    
+    # Test limit
+    response = client.get("/api/v1/products?limit=2")
+    assert response.status_code == status.HTTP_200_OK
+    data = response.json()
+    assert len(data["products"]) == 2
+    assert data["count"] == 5
+    
+    # Test offset and limit
+    response = client.get("/api/v1/products?offset=1&limit=2")
+    assert response.status_code == status.HTTP_200_OK
+    data = response.json()
+    assert len(data["products"]) == 2
+    assert data["count"] == 5
+
+
+def test_update_product(client) -> None:
+    """Test updating a product."""
+    # Create product
+    create_response = client.post(
+        "/api/v1/products",
+        json={"name": "Original Name", "price": 10.0}
+    )
+    product_id = create_response.json()["id"]
+    
+    # Update product
+    update_response = client.put(
+        f"/api/v1/products/{product_id}",
+        json={"name": "Updated Name", "price": 20.0}
+    )
+    assert update_response.status_code == status.HTTP_200_OK
+    data = update_response.json()
+    assert data["name"] == "Updated Name"
+    assert data["price"] == 20.0
+    
+    # Verify update
+    get_response = client.get(f"/api/v1/products/{product_id}")
+    assert get_response.json()["name"] == "Updated Name"
+
+
+def test_update_product_partial(client) -> None:
+    """Test updating a product with partial data."""
+    # Create product
+    create_response = client.post(
+        "/api/v1/products",
+        json={"name": "Original Name", "price": 10.0, "in_stock": True}
+    )
+    product_id = create_response.json()["id"]
+    
+    # Update only name
+    update_response = client.put(
+        f"/api/v1/products/{product_id}",
+        json={"name": "Updated Name"}
+    )
+    assert update_response.status_code == status.HTTP_200_OK
+    data = update_response.json()
+    assert data["name"] == "Updated Name"
+    assert data["price"] == 10.0  # Unchanged
+    assert data["in_stock"] is True  # Unchanged
+
+
+def test_update_product_not_found(client) -> None:
+    """Test updating a non-existent product returns 404."""
+    response = client.put(
+        f"/api/v1/products/{uuid4()}",
+        json={"name": "Updated Name"}
+    )
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+def test_delete_product(client) -> None:
+    """Test deleting a product."""
+    # Create product
+    create_response = client.post(
+        "/api/v1/products",
+        json={"name": "Test Product", "price": 10.0}
+    )
+    product_id = create_response.json()["id"]
+    
+    # Delete product
+    delete_response = client.delete(f"/api/v1/products/{product_id}")
+    assert delete_response.status_code == status.HTTP_204_NO_CONTENT
+    
+    # Verify deletion
+    get_response = client.get(f"/api/v1/products/{product_id}")
+    assert get_response.status_code == status.HTTP_404_NOT_FOUND
+
+
+def test_delete_product_not_found(client) -> None:
+    """Test deleting a non-existent product returns 404."""
+    response = client.delete(f"/api/v1/products/{uuid4()}")
+    assert response.status_code == status.HTTP_404_NOT_FOUND
