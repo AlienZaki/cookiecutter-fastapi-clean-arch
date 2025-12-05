@@ -84,7 +84,6 @@ The codebase follows a clean architecture with clear separation of concerns:
 - `api/` - Exposes REST endpoints
 - `schemas/` - Handles API request/response serialization (using Pydantic)
 - `core/` - Configuration, container (dependency injection), and logging
-- `modules/` - Add your custom modules here (scrapers, processors, validators, etc.)
 
 ## Getting Started
 
@@ -93,9 +92,8 @@ To get started, create your domain models and endpoints:
 1. **Create your domain models** in `app/domain/models.py` using dataclasses (framework-agnostic)
 2. **Create your schemas** in `app/schemas/` for API request/response serialization using Pydantic
 3. **Implement your services** in `app/services/` with your business logic
-4. **Add custom modules** in `app/modules/` for domain-specific functionality
-5. **Create API endpoints** in `app/api/v1/endpoints/` and include them in `app/api/router.py`
-6. **Update the container** in `app/core/container.py` to wire up your dependencies
+4. **Create API endpoints** in `app/api/v1/endpoints/` and include them in `app/api/router.py`
+5. **Update the container** in `app/core/container.py` to wire up your dependencies
 
 ## Architecture Highlights
 
@@ -116,7 +114,6 @@ The application uses a container pattern with lifecycle management:
 The application uses protocol-based design allowing easy extension:
 
 - Implement the `Repository` protocol for new storage backends (e.g., database)
-- Add custom modules in the `modules/` directory
 - Configuration is environment-based and type-safe using Pydantic settings
 
 ### Error Handling

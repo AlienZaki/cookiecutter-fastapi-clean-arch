@@ -5,13 +5,13 @@ A Cookiecutter template for creating FastAPI applications with clean architectur
 ## Features
 
 - **Clean Architecture**: Separation of concerns with domain, repositories, services, and API layers
+- **Framework-Agnostic Domain**: Domain models use Python dataclasses (not Pydantic)
+- **Dependency Injection**: Container pattern with lifecycle management
 - **Protocol-Based Design**: Extensible architecture using Python protocols
-- **Type Safety**: Strict pyright configuration for type checking
-- **Testing**: Comprehensive test structure with unit and integration tests
-- **Modern Tooling**: Uses `uv` for dependency management, `ruff` for linting
-- **Flexible Storage**: Support for memory and JSON file repositories
-- **Modular**: `modules/` directory for custom functionality
-- **Clean Starting Point**: Empty structure ready for your domain models
+- **Type Safety**: Strict pyright configuration
+- **Modern Tooling**: `uv`, `ruff`, `pytest`, `pre-commit` hooks
+- **Error Handling**: Domain exceptions mapped to HTTP status codes
+- **Example Endpoints**: Included to demonstrate patterns
 
 ## Usage
 
@@ -41,9 +41,9 @@ You'll be prompted for:
 ```bash
 cookiecutter cookiecutter-fastapi-clean-arch
 
-project_name [My FastAPI Project]: Product Catalog API
+project_name [My FastAPI Project]: My API Project
 python_version [3.13]: 3.13
-description [A FastAPI application with clean architecture]: A product catalog API
+description [A FastAPI application with clean architecture]: A REST API with clean architecture
 author_name [Your Name]: John Doe
 author_email [your.email@example.com]: john@example.com
 include_memory_repository [yes]: yes
@@ -55,18 +55,16 @@ api_prefix [/api/v1]: /api/v1
 ```
 project_name/
 ├── app/
-│   ├── core/           # Configuration
-│   ├── domain/         # Domain models and protocols
-│   ├── schemas/        # API request/response schemas
+│   ├── core/           # Configuration, container (DI), logging
+│   ├── domain/         # Framework-agnostic domain models (dataclasses) and protocols
+│   ├── schemas/        # API request/response schemas (Pydantic)
 │   ├── services/       # Business logic
-│   ├── repositories/   # Data persistence
-│   ├── api/            # FastAPI routes
-│   └── modules/        # Custom modules (scrapers, processors, etc.)
+│   ├── repositories/   # Data persistence implementations
+│   └── api/            # FastAPI routes and error handlers
 ├── tests/
-│   ├── unit/           # Unit tests
+│   ├── unit/           # Unit tests (domain, services, repositories, api)
 │   ├── integration/    # Integration tests
 │   └── fixtures/       # Test fixtures
-├── data/               # Data directory
 ├── main.py             # Application entry point
 ├── pyproject.toml      # Project configuration
 ├── Makefile            # Common tasks
@@ -77,23 +75,34 @@ project_name/
 
 After generating your project:
 
-1. **Create your domain models** in `app/domain/models.py`
-2. **Create your schemas** in `app/schemas/` for API request/response serialization
+1. **Create your domain models** in `app/domain/models.py` using Python dataclasses
+2. **Create your schemas** in `app/schemas/` for API request/response serialization using Pydantic
 3. **Implement your services** in `app/services/` with your business logic
-4. **Add custom modules** in `app/modules/`
+4. **Update the container** in `app/core/container.py` to wire up your dependencies
 5. **Create API endpoints** in `app/api/v1/endpoints/` and include them in `app/api/router.py`
-6. **Configure environment** by creating a `.env` file
-7. **Run the application**: `make run`
+6. **Register error handlers** in `app/api/error_handlers.py` for your domain exceptions
+7. **Configure environment** by creating a `.env` file
+8. **Run the application**: `make run`
 
-## Development
+The template may include example endpoints to demonstrate the architecture patterns. You can use them as a reference.
 
-The template generates a project with:
-- FastAPI for the web framework
-- Pydantic for data validation
-- pytest for testing
-- pyright for type checking
-- ruff for linting
-- uv for dependency management
+## Architecture Highlights
+
+### Framework-Agnostic Domain Layer
+
+Domain models use Python dataclasses instead of Pydantic, keeping the core domain independent of web framework concerns. Pydantic is only used in the API/schemas layer for request/response validation.
+
+### Dependency Injection Container
+
+The application uses a container pattern with lifecycle management:
+- Lazy initialization of dependencies
+- Factory pattern for creating repositories
+- Lifecycle management integrated with FastAPI's lifespan events
+- Easy to swap implementations (e.g., memory → database)
+
+### Protocol-Based Design
+
+Implement the `Repository` protocol for new storage backends. The container pattern makes it easy to swap implementations without changing business logic.
 
 ## License
 
