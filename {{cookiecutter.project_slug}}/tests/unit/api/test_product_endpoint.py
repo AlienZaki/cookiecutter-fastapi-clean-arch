@@ -8,7 +8,6 @@ To create endpoint tests:
 4. Seed test data via HTTP API to avoid async/sync issues
 """
 
-from collections.abc import Generator
 from uuid import uuid4
 
 import pytest
@@ -28,20 +27,20 @@ def memory_repository() -> MemoryRepository:
 
 
 @pytest.fixture
-def product_service(memory_repository: MemoryRepository) -> ProductService:
+def product_service(memory_repository) -> ProductService:
     """Create ProductService with test dependencies."""
     return ProductService(repository=memory_repository)
 
 
 @pytest.fixture
-def client(product_service: ProductService) -> Generator[TestClient]:
+def client(product_service):
     """Create test client with overridden dependencies."""
     app.dependency_overrides[get_product_service] = lambda: product_service
     yield TestClient(app)
     app.dependency_overrides.clear()
 
 
-def test_list_products_empty(client: TestClient) -> None:
+def test_list_products_empty(client) -> None:
     """Test listing products when repository is empty."""
     response = client.get("/api/v1/products")
     assert response.status_code == status.HTTP_200_OK
@@ -50,7 +49,7 @@ def test_list_products_empty(client: TestClient) -> None:
     assert data["products"] == []
 
 
-def test_list_products_with_items(client: TestClient) -> None:
+def test_list_products_with_items(client) -> None:
     """Test listing products with existing items."""
 
     client.post("/api/v1/products", json={"name": "Product 1", "price": 10.0})
@@ -63,7 +62,7 @@ def test_list_products_with_items(client: TestClient) -> None:
     assert len(data["products"]) == 2
 
 
-def test_get_product_by_id(client: TestClient) -> None:
+def test_get_product_by_id(client) -> None:
     """Test getting a product by ID."""
     # Create product via API
     create_response = client.post(
@@ -82,7 +81,7 @@ def test_get_product_by_id(client: TestClient) -> None:
     assert data["price"] == 15.0
 
 
-def test_get_product_by_id_not_found(client: TestClient) -> None:
+def test_get_product_by_id_not_found(client) -> None:
     """Test getting a non-existent product returns 404."""
     response = client.get(f"/api/v1/products/{uuid4()}")
     assert response.status_code == status.HTTP_404_NOT_FOUND
@@ -91,7 +90,7 @@ def test_get_product_by_id_not_found(client: TestClient) -> None:
     assert "not found" in data["error"].lower()
 
 
-def test_create_product(client: TestClient) -> None:
+def test_create_product(client) -> None:
     """Test creating a new product."""
     product_data = {"name": "New Product", "price": 25.0}
     response = client.post("/api/v1/products", json=product_data)
@@ -102,11 +101,10 @@ def test_create_product(client: TestClient) -> None:
     assert "id" in data
 
 
-def test_create_product_validation(client: TestClient) -> None:
+def test_create_product_validation(client) -> None:
     """Test creating a product with missing required fields."""
     invalid_data = {}  # Missing required fields
     response = client.post("/api/v1/products", json=invalid_data)
-    # FastAPI validates request schema and returns 422
-    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
     data = response.json()
     assert "detail" in data

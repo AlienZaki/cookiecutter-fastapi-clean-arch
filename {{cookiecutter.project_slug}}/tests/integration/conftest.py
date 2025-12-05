@@ -7,8 +7,30 @@ To create integration test fixtures:
 """
 
 import pytest
+from fastapi.testclient import TestClient
+
+from app.api.router import app
+from app.core.container import reset_container
 from app.repositories.memory_repository import MemoryRepository
 from app.services.product_service import ProductService
+
+
+@pytest.fixture(autouse=True)
+def reset_container_before_test() -> None:
+    """Reset container before each test to ensure test isolation.
+    
+    This ensures each test starts with a fresh container and repository,
+    preventing test pollution from shared state.
+    """
+    reset_container()
+    yield
+    reset_container()
+
+
+@pytest.fixture
+def client() -> TestClient:
+    """Create a test client for integration tests."""
+    return TestClient(app)
 
 
 @pytest.fixture

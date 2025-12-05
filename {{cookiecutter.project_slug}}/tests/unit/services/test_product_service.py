@@ -8,6 +8,8 @@ To create service tests:
 """
 
 import pytest
+
+from app.domain.errors import ProductNotFoundError
 from app.domain.models import Product
 from app.repositories.memory_repository import MemoryRepository
 from app.services.product_service import ProductService
@@ -35,3 +37,12 @@ async def test_product_service_get_products() -> None:
     await service.create_product(product2)
     products = await service.get_products()
     assert len(products) == 2
+
+
+@pytest.mark.asyncio
+async def test_product_service_get_product_by_id_not_found() -> None:
+    """Test getting a product by ID when product does not exist."""
+    repo = MemoryRepository()
+    service = ProductService(repository=repo)
+    with pytest.raises(ProductNotFoundError, match="Product 'non-existent' not found"):
+        await service.get_product_by_id("non-existent")

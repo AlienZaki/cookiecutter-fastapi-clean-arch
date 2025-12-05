@@ -7,14 +7,7 @@ To create integration tests:
 3. Write tests for complete API flows
 """
 
-from fastapi.testclient import TestClient
-
-from app.api.router import app
-
-client = TestClient(app)
-
-
-def test_create_and_list_products() -> None:
+def test_create_and_list_products(client) -> None:
     """Test complete flow: create product, then list it."""
     create_response = client.post(
         "/api/v1/products",
