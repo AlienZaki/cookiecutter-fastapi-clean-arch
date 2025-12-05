@@ -1,0 +1,12 @@
+{
+  "project_name": "Fast App",
+  "project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '-').replace('_', '-') }}",
+  "app_name": "app",
+  "python_version": "3.13",
+  "description": "A FastAPI application with clean architecture",
+  "author_name": "Zaki",
+  "author_email": "zaki@example.com",
+  "include_memory_repository": "yes",
+  "api_prefix": "/api/v1"
+}
+

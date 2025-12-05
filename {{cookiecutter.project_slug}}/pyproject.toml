@@ -1,0 +1,72 @@
+[project]
+name = "{{ cookiecutter.project_slug }}"
+version = "0.1.0"
+description = "{{ cookiecutter.description }}"
+readme = "README.md"
+requires-python = ">={{ cookiecutter.python_version }}"
+dependencies = [
+    "fastapi>=0.123.4",
+    "httpx>=0.27.0",
+    "pydantic>=2.12.5",
+    "pydantic-settings>=2.12.0",
+    "pytest-asyncio>=1.3.0",
+    "python-dotenv>=1.2.1",
+    "uvicorn[standard]>=0.38.0",
+]
+
+[dependency-groups]
+dev = [
+    "pyright>=1.1.0",
+    "pre-commit>=4.5.0",
+    "pytest>=9.0.1",
+    "ruff>=0.14.7",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py{{ cookiecutter.python_version | replace('.', '') }}"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP", "B", "C4", "SIM"]
+ignore = ["B008"]  # FastAPI Depends() in defaults is intentional
+
+[tool.ruff.lint.isort]
+force-single-line = true
+
+[tool.pyright]
+pythonVersion = "{{ cookiecutter.python_version }}"
+typeCheckingMode = "strict"
+reportMissingImports = true
+reportMissingTypeStubs = false
+reportUnusedImport = true
+reportUnusedClass = true
+reportUnusedFunction = true
+reportUnusedVariable = true
+reportDuplicateImport = true
+reportWildcardImportFromLibrary = true
+reportOptionalSubscript = true
+reportOptionalMemberAccess = true
+reportOptionalCall = true
+reportOptionalIterable = true
+reportOptionalContextManager = true
+reportOptionalOperand = true
+reportGeneralTypeIssues = true
+reportPrivateImportUsage = true
+reportConstantRedefinition = true
+reportIncompatibleMethodOverride = true
+reportIncompatibleVariableOverride = true
+
+exclude = [
+    "**/__pycache__",
+    "**/node_modules",
+    "**/.venv",
+    "**/.pytest_cache",
+    "**/.ruff_cache",
+]
+
+include = [
+    "app",
+    "tests",
+    "main.py",
+]
+
