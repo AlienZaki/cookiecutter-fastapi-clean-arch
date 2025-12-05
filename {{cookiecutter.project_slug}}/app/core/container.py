@@ -1,8 +1,6 @@
 from app.domain.protocols import Repository
-from app.services.product_service import ProductService
-{% if cookiecutter.include_memory_repository == "yes" %}
 from app.repositories.memory_repository import MemoryRepository
-{% endif %}
+from app.services.entity_service import EntityService
 
 
 class Container:
@@ -16,7 +14,7 @@ class Container:
     def __init__(self) -> None:
         """Initialize container (dependencies created lazily)."""
         self._repository: Repository | None = None
-        self._product_service: ProductService | None = None
+        self._entity_service: EntityService | None = None
 
     @property
     def repository(self) -> Repository:
@@ -26,11 +24,11 @@ class Container:
         return self._repository
 
     @property
-    def product_service(self) -> ProductService:
-        """Get ProductService instance."""
-        if self._product_service is None:
-            self._product_service = ProductService(repository=self.repository)
-        return self._product_service
+    def entity_service(self) -> EntityService:
+        """Get EntityService instance."""
+        if self._entity_service is None:
+            self._entity_service = EntityService(repository=self.repository)
+        return self._entity_service
 
     def _create_repository(self) -> Repository:
         """Factory method to create repository based on settings.
@@ -38,13 +36,9 @@ class Container:
         In future, can switch based on settings.repository_type
         (e.g., "memory", "postgres", "mongodb").
         """
-{% if cookiecutter.include_memory_repository == "yes" %}
+
         return MemoryRepository()
-{% else %}
-        raise NotImplementedError(
-            "No repository implementation available. "
-        )
-{% endif %}
+
 
     def reset(self) -> None:
         """Reset container state.
@@ -52,7 +46,7 @@ class Container:
         Clears all dependencies, forcing re-initialization on next access.
         """
         self._repository = None
-        self._product_service = None
+        self._entity_service = None
 
 
 _container: Container | None = None

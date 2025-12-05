@@ -10,30 +10,30 @@ from fastapi import Request
 from fastapi import status
 from fastapi.responses import JSONResponse
 
-from app.domain.errors import ProductNotFoundError
-from app.domain.errors import ProductValidationError
+from app.domain.errors import EntityNotFoundError
+from app.domain.errors import EntityValidationError
 
 
-async def product_not_found_handler(
+async def entity_not_found_handler(
     request: Request,
     exc: Exception,
 ) -> JSONResponse:
-    """Handle ProductNotFoundError exceptions."""
-    if not isinstance(exc, ProductNotFoundError):
-        raise TypeError("Expected ProductNotFoundError")
+    """Handle EntityNotFoundError exceptions."""
+    if not isinstance(exc, EntityNotFoundError):
+        raise TypeError("Expected EntityNotFoundError")
     return JSONResponse(
         status_code=status.HTTP_404_NOT_FOUND,
-        content={"error": str(exc), "product_id": exc.product_id},
+        content={"error": str(exc), "entity_id": exc.entity_id},
     )
 
 
-async def product_validation_error_handler(
+async def entity_validation_error_handler(
     request: Request,
     exc: Exception,
 ) -> JSONResponse:
-    """Handle ProductValidationError exceptions."""
-    if not isinstance(exc, ProductValidationError):
-        raise TypeError("Expected ProductValidationError")
+    """Handle EntityValidationError exceptions."""
+    if not isinstance(exc, EntityValidationError):
+        raise TypeError("Expected EntityValidationError")
     return JSONResponse(
         status_code=status.HTTP_400_BAD_REQUEST,
         content={"error": str(exc)},

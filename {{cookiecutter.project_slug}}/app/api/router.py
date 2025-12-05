@@ -4,15 +4,15 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from app.api.error_handlers import product_not_found_handler
-from app.api.error_handlers import product_validation_error_handler
-from app.api.v1.endpoints import products
+from app.api.error_handlers import entity_not_found_handler
+from app.api.error_handlers import entity_validation_error_handler
+from app.api.v1.endpoints import entities
 from app.core.config import settings
 from app.core.container import get_container
 from app.core.container import reset_container
 from app.core.logging import setup_logging
-from app.domain.errors import ProductNotFoundError
-from app.domain.errors import ProductValidationError
+from app.domain.errors import EntityNotFoundError
+from app.domain.errors import EntityValidationError
 
 
 @asynccontextmanager
@@ -47,9 +47,9 @@ async def health() -> dict[str, str]:
 
 
 # Include API routes
-app.include_router(products.router, prefix="{{ cookiecutter.api_prefix }}", tags=["products"])
+app.include_router(entities.router, prefix="{{ cookiecutter.api_prefix }}", tags=["entities"])
 
 
 # Register error handlers
-app.add_exception_handler(ProductNotFoundError, product_not_found_handler)
-app.add_exception_handler(ProductValidationError, product_validation_error_handler)
+app.add_exception_handler(EntityNotFoundError, entity_not_found_handler)
+app.add_exception_handler(EntityValidationError, entity_validation_error_handler)

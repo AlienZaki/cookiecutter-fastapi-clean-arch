@@ -10,8 +10,8 @@ from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
-class Product:
-    """Product domain model (immutable domain entity)."""
+class Entity:
+    """Entity domain model (immutable domain entity)."""
 
     id: str
     name: str
@@ -21,8 +21,8 @@ class Product:
     def __post_init__(self) -> None:
         """Validate domain invariants."""
         if not self.id or not self.id.strip():
-            raise ValueError("Product id cannot be empty")
+            raise ValueError("Entity id cannot be empty")
         if not self.name or not self.name.strip():
-            raise ValueError("Product name cannot be empty")
+            raise ValueError("Entity name cannot be empty")
         if self.price < 0:
-            raise ValueError("Product price cannot be negative")
+            raise ValueError("Entity price cannot be negative")

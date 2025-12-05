@@ -7,19 +7,19 @@ To create integration tests:
 3. Write tests for complete API flows
 """
 
-def test_create_and_list_products(client) -> None:
-    """Test complete flow: create product, then list it."""
+def test_create_and_list_entities(client) -> None:
+    """Test complete flow: create entity, then list it."""
     create_response = client.post(
-        "/api/v1/products",
-        json={"name": "Test Product", "price": 10.0}
+        "{{ cookiecutter.api_prefix }}/entities",
+        json={"name": "Test Entity", "price": 10.0}
     )
     assert create_response.status_code == 201
     created_id = create_response.json()["id"]
 
-    list_response = client.get("/api/v1/products")
+    list_response = client.get("{{ cookiecutter.api_prefix }}/entities")
     assert list_response.status_code == 200
     data = list_response.json()
 
     assert data["count"] >= 1
-    product_ids = [p["id"] for p in data["products"]]
-    assert created_id in product_ids
+    entity_ids = [e["id"] for e in data["entities"]]
+    assert created_id in entity_ids

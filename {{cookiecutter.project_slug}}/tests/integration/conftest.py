@@ -12,7 +12,7 @@ from fastapi.testclient import TestClient
 from app.api.router import app
 from app.core.container import reset_container
 from app.repositories.memory_repository import MemoryRepository
-from app.services.product_service import ProductService
+from app.services.entity_service import EntityService
 
 
 @pytest.fixture(autouse=True)
@@ -40,6 +40,6 @@ def memory_repository() -> MemoryRepository:
 
 
 @pytest.fixture
-def product_service(memory_repository: MemoryRepository) -> ProductService:
-    """Create ProductService with test dependencies."""
-    return ProductService(repository=memory_repository)
+def entity_service(memory_repository: MemoryRepository) -> EntityService:
+    """Create EntityService with test dependencies."""
+    return EntityService(repository=memory_repository)

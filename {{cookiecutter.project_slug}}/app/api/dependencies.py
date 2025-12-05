@@ -1,6 +1,6 @@
 from app.core.container import get_container
 from app.domain.protocols import Repository
-from app.services.product_service import ProductService
+from app.services.entity_service import EntityService
 
 
 def get_repository() -> Repository:
@@ -8,6 +8,6 @@ def get_repository() -> Repository:
     return get_container().repository
 
 
-def get_product_service() -> ProductService:
-    """Get ProductService instance from container."""
-    return get_container().product_service
+def get_entity_service() -> EntityService:
+    """Get EntityService instance from container."""
+    return get_container().entity_service
