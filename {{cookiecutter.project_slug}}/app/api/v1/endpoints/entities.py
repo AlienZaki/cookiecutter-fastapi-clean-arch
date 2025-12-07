@@ -19,7 +19,6 @@ from fastapi import Query
 from fastapi import status
 
 from app.api.dependencies import get_entity_service
-from app.domain.errors import EntityValidationError
 from app.domain.models import Entity
 from app.schemas.entity import EntityCreateRequest
 from app.schemas.entity import EntitySchema
@@ -62,17 +61,14 @@ async def create_entity(
     service: EntityService = Depends(get_entity_service),
 ) -> EntitySchema:
     """Create a new entity."""
-    try:
-        entity = Entity(
-            id=str(uuid4()),
-            name=request.name,
-            price=request.price,
-            in_stock=request.in_stock,
-        )
-        created = await service.create_entity(entity)
-        return EntitySchema.from_domain(created)
-    except ValueError as e:
-        raise EntityValidationError(str(e)) from e
+    entity = Entity(
+        id=str(uuid4()),
+        name=request.name,
+        price=request.price,
+        in_stock=request.in_stock,
+    )
+    created = await service.create_entity(entity)
+    return EntitySchema.from_domain(created)
 
 
 @router.put("/entities/{entity_id}", response_model=EntitySchema, status_code=status.HTTP_200_OK)
@@ -82,7 +78,6 @@ async def update_entity(
     service: EntityService = Depends(get_entity_service),
 ) -> EntitySchema:
     """Update an existing entity."""
-    # Get existing entity
     existing_entity = await service.get_entity_by_id(entity_id)
 
     # Create updated entity with new values or keep existing ones
@@ -93,11 +88,8 @@ async def update_entity(
         in_stock=request.in_stock if request.in_stock is not None else existing_entity.in_stock,
     )
 
-    try:
-        updated = await service.update_entity(updated_entity)
-        return EntitySchema.from_domain(updated)
-    except ValueError as e:
-        raise EntityValidationError(str(e)) from e
+    updated = await service.update_entity(updated_entity)
+    return EntitySchema.from_domain(updated)
 
 
 @router.delete("/entities/{entity_id}", status_code=status.HTTP_204_NO_CONTENT)
