@@ -28,7 +28,7 @@ line-length = 100
 target-version = "py{{ cookiecutter.python_version | replace('.', '') }}"
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "N", "W", "UP", "B", "C4", "SIM"]
+select = ["E", "F", "I", "N", "W", "UP", "B", "C4", "SIM", "PLC"]
 ignore = ["B008"]  # FastAPI Depends() in defaults is intentional
 
 [tool.ruff.lint.isort]
